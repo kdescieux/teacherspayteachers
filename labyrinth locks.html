@@ -3,147 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Answer the Guardian's Questions</title>
+    <title>The Unlocking Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        /* Apply a dark, ancient, stone-like aesthetic */
+        :root {
+            --lock-body-color: #6b7280; /* Gray-500 - Stone Body */
+            --unlocked-color: #34d399; /* Emerald-400 */
+            --locked-color: #f87171; /* Red-400 */
+            --shackle-color: #fca311; /* Amber/Gold for metallic shackle */
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #1f2937; /* Dark Slate Background for Labyrinth */
+            color: #f3f4f6; /* Light text */
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             padding: 2rem;
         }
+
+        /* Main container styled like an ancient slab */
         .container {
             max-width: 900px;
             width: 100%;
-            background-color: white;
+            background: linear-gradient(145deg, #374151, #1f2937);
             padding: 2.5rem;
             border-radius: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.6);
             text-align: center;
         }
-        .lock-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+
+        /* Title Font for an epic feel */
+        .title-font {
+            font-family: 'Cinzel', serif;
         }
+
+        /* Custom styles for the lock card */
         .lock {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            background-color: #f9fafb;
-            border-radius: 1rem;
-            border: 2px solid #e5e7eb;
-            transition: all 0.3s ease-in-out;
+            background: #2b3543; /* Slightly lighter than container for contrast */
+            border: 2px solid #4a5568; 
+            transition: all 0.5s ease-in-out;
         }
+
         .lock.unlocked {
-            background-color: #d1fae5;
-            border-color: #34d399;
+            background-color: #102e3b; /* Darker unlocked state */
+            border-color: var(--unlocked-color);
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.5);
         }
+
+        .lock-container {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted min-width for better mobile view */
+        }
+
         .lock-icon {
-            width: 60px;
-            height: 60px;
+            width: 80px; /* Bigger lock icon */
+            height: 80px; 
             margin-bottom: 1rem;
-            transition: transform 0.5s ease-in-out;
         }
-        .lock-icon.unlocked-icon {
-            transform: rotateY(180deg);
+
+        /* SVG Styling */
+        .lock-svg .shackle {
+            /* The path itself is styled for stroke, CSS handles transformations/color */
+            stroke: var(--shackle-color);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
+
+        .lock-svg .body {
+            fill: var(--lock-body-color);
+            transition: fill 0.5s ease;
+            filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.4));
+        }
+
+        /* Unlocked State SVG */
+        .lock.unlocked .lock-svg .shackle {
+            stroke: var(--unlocked-color); /* Green when unlocked */
+            transform: translateY(-8px); /* Visually lifts the shackle */
+        }
+        .lock.unlocked .lock-svg .body {
+            fill: #4b5563; /* Body remains stone-like */
+        }
+
+        /* Status Text Styling */
         .lock-status {
+            color: var(--locked-color);
             font-weight: bold;
-            color: #ef4444;
             transition: color 0.3s ease-in-out;
         }
         .lock.unlocked .lock-status {
-            color: #10b981;
+            color: var(--unlocked-color);
         }
+        
         .final-message {
-            margin-top: 3rem;
-            padding: 2rem;
-            background-color: #eff6ff;
-            border: 2px solid #60a5fa;
-            border-radius: 1rem;
-            transition: opacity 0.5s ease-in-out;
+            opacity: 0; /* Starts hidden */
+            transition: opacity 1s ease-in-out;
+            background-color: #0c4a6e;
+            border: 2px solid #fca311;
         }
-        .hidden {
-            display: none;
-            opacity: 0;
+        .final-message:not(.hidden) {
+            opacity: 1;
         }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
     <div class="container">
-        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">The Unlocking Challenge</h1>
+        <!-- New Themed Header -->
+        <h1 class="title-font text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500 mb-2">
+            The Unlocking Challenge
+        </h1>
+        <p class="text-xl md:text-2xl title-font text-gray-300 mb-8">
+            Answer the guardian's questions
+        </p>
 
         <div id="locks-wrapper" class="lock-container">
             <!-- Lock 1 -->
-            <div id="lock1" class="lock group">
-                <div class="lock-icon" id="icon1">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a2 2 0 110-4 2 2 0 010 4z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20h4a2 2 0 002-2v-6a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4"/>
+            <div id="lock1" class="lock group rounded-xl">
+                <div class="lock-icon lock-svg" id="icon1">
+                    <!-- Custom Fatter Lock SVG -->
+                    <svg viewBox="0 0 24 24" fill="none" class="w-full h-full">
+                        <!-- Shackle (The U-Bar) - Stroke color and transform controlled by CSS -->
+                        <path class="shackle" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 11V5a5 5 0 00-5 5v2.5M12 11V5a5 5 0 015 5v2.5"
+                            />
+                        <!-- Lock Body (Fatter/Heavier Look) -->
+                        <path class="body" fill="currentColor" 
+                            d="M3 13.5v3.5A3.5 3.5 0 006.5 20h11A3.5 3.5 0 0021 17v-3.5a1 1 0 00-1-1H4a1 1 0 00-1 1z" />
+                        <!-- Keyhole (Decorative detail) -->
+                        <circle cx="12" cy="16.5" r="1.2" fill="#374151"/>
+                        <path d="M12 17.7v1.8" stroke="#374151" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                 </div>
-                <p class="text-center text-gray-800 font-semibold mb-2">What is the past participle of "throw?"</p>
-                <input type="text" id="input1" class="w-full px-4 py-2 mt-2 text-center rounded-lg border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors" placeholder="Type answer here">
-                <p class="lock-status mt-2">Locked</p>
+                <p class="text-center text-gray-200 font-semibold mb-2">What is the past participle of "throw?"</p>
+                <input type="text" id="input1" class="w-full px-4 py-2 mt-2 text-center rounded-lg border-2 border-gray-500 focus:outline-none focus:border-amber-500 transition-colors bg-gray-700 text-white placeholder-gray-400" placeholder="Type answer here">
+                <p class="lock-status mt-2 text-lg">Locked</p>
             </div>
 
             <!-- Lock 2 -->
-            <div id="lock2" class="lock group">
-                <div class="lock-icon" id="icon2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a2 2 0 110-4 2 2 0 010 4z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20h4a2 2 0 002-2v-6a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4"/>
+            <div id="lock2" class="lock group rounded-xl">
+                <div class="lock-icon lock-svg" id="icon2">
+                    <!-- Custom Fatter Lock SVG -->
+                    <svg viewBox="0 0 24 24" fill="none" class="w-full h-full">
+                        <!-- Shackle (The U-Bar) - Stroke color and transform controlled by CSS -->
+                        <path class="shackle" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 11V5a5 5 0 00-5 5v2.5M12 11V5a5 5 0 015 5v2.5"
+                            />
+                        <!-- Lock Body (Fatter/Heavier Look) -->
+                        <path class="body" fill="currentColor" 
+                            d="M3 13.5v3.5A3.5 3.5 0 006.5 20h11A3.5 3.5 0 0021 17v-3.5a1 1 0 00-1-1H4a1 1 0 00-1 1z" />
+                        <!-- Keyhole (Decorative detail) -->
+                        <circle cx="12" cy="16.5" r="1.2" fill="#374151"/>
+                        <path d="M12 17.7v1.8" stroke="#374151" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                 </div>
-                <p class="text-center text-gray-800 font-semibold mb-2">Which word is unnecessary in the sentence: "I am agree with you."</p>
-                <input type="text" id="input2" class="w-full px-4 py-2 mt-2 text-center rounded-lg border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors" placeholder="Type answer here">
-                <p class="lock-status mt-2">Locked</p>
+                <p class="text-center text-gray-200 font-semibold mb-2">Which word is unnecessary in the sentence: "I am agree with you."</p>
+                <input type="text" id="input2" class="w-full px-4 py-2 mt-2 text-center rounded-lg border-2 border-gray-500 focus:outline-none focus:border-amber-500 transition-colors bg-gray-700 text-white placeholder-gray-400" placeholder="Type answer here">
+                <p class="lock-status mt-2 text-lg">Locked</p>
             </div>
 
             <!-- Lock 3 -->
-            <div id="lock3" class="lock group">
-                <div class="lock-icon" id="icon3">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a2 2 0 110-4 2 2 0 010 4z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20h4a2 2 0 002-2v-6a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4"/>
+            <div id="lock3" class="lock group rounded-xl">
+                <div class="lock-icon lock-svg" id="icon3">
+                    <!-- Custom Fatter Lock SVG -->
+                    <svg viewBox="0 0 24 24" fill="none" class="w-full h-full">
+                        <!-- Shackle (The U-Bar) - Stroke color and transform controlled by CSS -->
+                        <path class="shackle" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 11V5a5 5 0 00-5 5v2.5M12 11V5a5 5 0 015 5v2.5"
+                            />
+                        <!-- Lock Body (Fatter/Heavier Look) -->
+                        <path class="body" fill="currentColor" 
+                            d="M3 13.5v3.5A3.5 3.5 0 006.5 20h11A3.5 3.5 0 0021 17v-3.5a1 1 0 00-1-1H4a1 1 0 00-1 1z" />
+                        <!-- Keyhole (Decorative detail) -->
+                        <circle cx="12" cy="16.5" r="1.2" fill="#374151"/>
+                        <path d="M12 17.7v1.8" stroke="#374151" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                 </div>
-                <p class="text-center text-gray-800 font-semibold mb-2">Which word is missing in the sentence: "I will explain you the homework."</p>
-                <input type="text" id="input3" class="w-full px-4 py-2 mt-2 text-center rounded-lg border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors" placeholder="Type answer here">
-                <p class="lock-status mt-2">Locked</p>
+                <p class="text-center text-gray-200 font-semibold mb-2">Which word is missing in the sentence: "I will explain you the homework."</p>
+                <input type="text" id="input3" class="w-full px-4 py-2 mt-2 text-center rounded-lg border-2 border-gray-500 focus:outline-none focus:border-amber-500 transition-colors bg-gray-700 text-white placeholder-gray-400" placeholder="Type answer here">
+                <p class="lock-status mt-2 text-lg">Locked</p>
             </div>
 
             <!-- Lock 4 -->
-            <div id="lock4" class="lock group">
-                <div class="lock-icon" id="icon4">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a2 2 0 110-4 2 2 0 010 4z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20h4a2 2 0 002-2v-6a2 2 0 00-2-2h-4a2 2 0 00-2 2v6a2 2 0 002 2z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4"/>
+            <div id="lock4" class="lock group rounded-xl">
+                <div class="lock-icon lock-svg" id="icon4">
+                    <!-- Custom Fatter Lock SVG -->
+                    <svg viewBox="0 0 24 24" fill="none" class="w-full h-full">
+                        <!-- Shackle (The U-Bar) - Stroke color and transform controlled by CSS -->
+                        <path class="shackle" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 11V5a5 5 0 00-5 5v2.5M12 11V5a5 5 0 015 5v2.5"
+                            />
+                        <!-- Lock Body (Fatter/Heavier Look) -->
+                        <path class="body" fill="currentColor" 
+                            d="M3 13.5v3.5A3.5 3.5 0 006.5 20h11A3.5 3.5 0 0021 17v-3.5a1 1 0 00-1-1H4a1 1 0 00-1 1z" />
+                        <!-- Keyhole (Decorative detail) -->
+                        <circle cx="12" cy="16.5" r="1.2" fill="#374151"/>
+                        <path d="M12 17.7v1.8" stroke="#374151" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                 </div>
-                <p class="text-center text-gray-800 font-semibold mb-2">Which word is pronounced differently from the others?<br/>(by - buy - buoy - bye)</p>
-                <input type="text" id="input4" class="w-full px-4 py-2 mt-2 text-center rounded-lg border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors" placeholder="Type answer here">
-                <p class="lock-status mt-2">Locked</p>
+                <p class="text-center text-gray-200 font-semibold mb-2">Which word is pronounced differently from the others?<br/>(by - buy - buoy - bye)</p>
+                <input type="text" id="input4" class="w-full px-4 py-2 mt-2 text-center rounded-lg border-2 border-gray-500 focus:outline-none focus:border-amber-500 transition-colors bg-gray-700 text-white placeholder-gray-400" placeholder="Type answer here">
+                <p class="lock-status mt-2 text-lg">Locked</p>
             </div>
         </div>
 
         <!-- The Final Reveal Message -->
-        <div id="finalMessage" class="final-message hidden">
-            <h2 class="text-2xl font-bold text-blue-800 mb-4">Congratulations!</h2>
-            <p class="text-xl font-bold text-blue-900 mt-2">The password is: **bacon**</p>
+        <div id="finalMessage" class="final-message hidden rounded-xl">
+            <h2 class="title-font text-3xl font-bold text-amber-300 mb-4">The Great Door is Open!</h2>
+            <p class="text-xl font-bold text-gray-100 mt-2">The password is: <span class="text-4xl text-green-400 font-extrabold tracking-widest title-font">BACON</span></p>
         </div>
     </div>
 
@@ -156,12 +225,16 @@
                 'input4': 'buoy',
             };
 
-            const solvedLocks = {
-                'input1': false,
-                'input2': false,
-                'input3': false,
-                'input4': false,
-            };
+            // Initialize solved state based on input fields (to persist unlocked state if the user refreshes)
+            const solvedLocks = {};
+            
+            // Set initial state from the DOM or localStorage (for persistence if needed)
+            document.querySelectorAll('input').forEach(input => {
+                const lockId = input.id;
+                const lockElement = document.getElementById(lockId.replace('input', 'lock'));
+                solvedLocks[lockId] = lockElement.classList.contains('unlocked');
+            });
+
 
             const finalMessage = document.getElementById('finalMessage');
 
@@ -174,21 +247,29 @@
                     if (userAnswer === correctAnswers[lockId].toLowerCase()) {
                         // Mark the lock as correct
                         const lockElement = document.getElementById(lockId.replace('input', 'lock'));
-                        const lockIcon = document.getElementById(lockId.replace('input', 'icon'));
                         const lockStatus = lockElement.querySelector('.lock-status');
                         
                         if (!solvedLocks[lockId]) {
+                            // Apply the "unlocked" state classes
                             lockElement.classList.add('unlocked');
-                            lockIcon.classList.add('unlocked-icon');
                             lockStatus.textContent = "Unlocked!";
                             solvedLocks[lockId] = true;
                             
                             // Check if all are solved
                             checkAllLocks();
+                            
+                            // Clear input after success
+                            event.target.value = '';
+                            event.target.setAttribute('disabled', 'true'); // Disable input once solved
+
+                            // Custom message for success
+                            const lockName = lockId.replace('input', 'Lock ');
+                            showMessage(`Lock ${lockId.slice(-1)} has yielded! The path is clearer.`, 'success');
                         }
                     } else {
                         // Incorrect answer, reset the input field
                         event.target.value = '';
+                        showMessage(`The Guardian remains unconvinced. Try again!`, 'error');
                     }
                 });
             });
@@ -197,12 +278,40 @@
                 const allSolved = Object.values(solvedLocks).every(isSolved => isSolved === true);
                 if (allSolved) {
                     finalMessage.classList.remove('hidden');
-                    // Add a slight delay for a nice effect
+                    // Ensure opacity is set to 1 for the transition to work
                     setTimeout(() => {
                         finalMessage.style.opacity = '1';
                     }, 50);
                 }
             }
+
+            /**
+             * Shows a message box for feedback (replacing alert/confirm).
+             * @param {string} message The message to display.
+             * @param {string} type The type of message ('success' or 'error').
+             */
+            function showMessage(message, type = 'error') {
+                const msgBox = document.createElement('div');
+                msgBox.className = 'fixed top-4 left-1/2 -translate-x-1/2 z-50 p-4 transition-all duration-300 rounded-xl shadow-2xl text-center font-semibold max-w-sm w-full';
+                msgBox.textContent = message;
+
+                if (type === 'success') {
+                    msgBox.classList.add('bg-green-600', 'text-white');
+                } else {
+                    msgBox.classList.add('bg-red-600', 'text-white');
+                }
+                
+                document.body.appendChild(msgBox);
+
+                // Auto-remove after 3 seconds
+                setTimeout(() => {
+                    msgBox.classList.add('opacity-0');
+                    msgBox.addEventListener('transitionend', () => msgBox.remove());
+                }, 3000);
+            }
+            
+            // Initial check to handle state if the page were dynamically loaded
+            checkAllLocks();
         });
     </script>
 
