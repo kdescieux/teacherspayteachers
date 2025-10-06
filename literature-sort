@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Literature Sorting Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Define color palette and typography for the literary, dark theme */
+        :root {
+            --dark-bg: #1f2937;
+            --container-bg: #374151;
+            --card-bg: #4b5563;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --gold-color: #fca311;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .title-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Main container styling */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: linear-gradient(145deg, var(--container-bg), #1f2937);
+            padding: 2rem 1.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Drag Item Styling */
+        .drag-item {
+            cursor: grab;
+            background-color: var(--card-bg);
+            border: 2px solid #6b7280;
+            transition: transform 0.1s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+        }
+        .drag-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Dragging state feedback */
+        .dragging {
+            opacity: 0.5;
+            border-style: dashed !important;
+        }
+
+        /* Drop Zone Styling */
+        .drop-zone {
+            min-height: 250px;
+            padding: 1rem;
+            border: 3px dashed #6b7280;
+            transition: all 0.2s ease;
+        }
+
+        /* Drag over feedback */
+        .drop-zone.drag-over {
+            border-color: var(--gold-color);
+            background-color: #434e5c;
+            transform: scale(1.01);
+        }
+
+        /* Validation Feedback (correctly placed) */
+        .correct {
+            border-color: var(--success-color);
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        /* Final Message Styling */
+        .final-message {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-color: #0c4a6e;
+            border: 2px solid var(--gold-color);
+        }
+        .final-message:not(.hidden) {
+            opacity: 1;
+        }
+        
+        /* Utility for small screens */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .column-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+
+    <div class="container">
+        <!-- Header -->
+        <h1 class="title-font text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500 mb-2">
+            The Great Literary Divide
+        </h1>
+        <p class="text-lg md:text-xl title-font text-gray-300 mb-8">
+            Sort each work into its continent of origin to unlock the next secret.
+        </p>
+
+        <!-- Initial Drag Items Pool -->
+        <div id="item-pool" class="flex flex-wrap gap-3 justify-center bg-gray-700 p-4 rounded-xl mb-8 border border-gray-600 shadow-inner">
+            <!-- Items will be generated here by JavaScript -->
+        </div>
+
+        <!-- Drop Zones -->
+        <div class="flex flex-col md:flex-row gap-6 column-container">
+            <!-- US American Literature Column -->
+            <div id="us-column" class="drop-zone flex-1 rounded-xl p-4 transition-all duration-300">
+                <h3 class="title-font text-2xl font-bold mb-4 text-green-400">🇺🇸 (US) American Literature</h3>
+                <div class="flex flex-col gap-2 min-h-[250px] space-y-2">
+                    <!-- Dropped items go here -->
+                </div>
+            </div>
+
+            <!-- Non-American Literature Column -->
+            <div id="non-us-column" class="drop-zone flex-1 rounded-xl p-4 transition-all duration-300">
+                <h3 class="title-font text-2xl font-bold mb-4 text-red-400">🌍 Non-(US) American Literature</h3>
+                <div class="flex flex-col gap-2 min-h-[250px] space-y-2">
+                    <!-- Dropped items go here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Check Button -->
+        <button id="check-button" class="mt-8 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full text-lg shadow-lg shadow-indigo-500/50 transition-all duration-300 transform hover:scale-105" onclick="checkAnswers()">
+            Verify Literary Alignment
+        </button>
+        
+        <!-- The Final Reveal Message - UPDATED CONTENT -->
+        <div id="final-message" class="final-message hidden mt-8 p-6 rounded-xl">
+            <h2 class="title-font text-3xl font-bold text-amber-300 mb-4">Challenge Complete!</h2>
+            <!-- This text is changed to reflect the specific question -->
+            <p class="text-xl font-bold text-gray-100 mt-2">The answer to "How many works were US American Literature?" is: <span class="text-4xl text-green-400 font-extrabold tracking-widest title-font">8</span></p>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA SETUP ---
+        const literatureItems = [
+            { id: 'item-fitzgerald', text: 'F. Scott Fitzgerald / The Great Gatsby', correctColumn: 'us-column' },
+            { id: 'item-mann', text: 'Thomas Mann / The Magic Mountain', correctColumn: 'non-us-column' }, // German
+            { id: 'item-hemingway', text: 'Ernest Hemingway / The Old Man and the Sea', correctColumn: 'us-column' },
+            { id: 'item-hugo', text: 'Victor Hugo / Les Misérables', correctColumn: 'non-us-column' }, // French
+            { id: 'item-twain', text: 'Mark Twain / The Adventures of Tom Sawyer', correctColumn: 'us-column' },
+            { id: 'item-allende', text: 'Isabel Allende / City of the Beasts', correctColumn: 'non-us-column' }, // Chilean
+            { id: 'item-angelou', text: 'Maya Angelou / And Still I Rise', correctColumn: 'us-column' },
+            { id: 'item-zafon', text: 'Carlos Ruiz Zafón / The Shadow of the Wind', correctColumn: 'non-us-column' }, // Spanish
+            { id: 'item-gomez', text: 'Juan Gómez-Jurado / Reina Roja', correctColumn: 'non-us-column' }, // Spanish
+            { id: 'item-vonnegut', text: 'Kurt Vonnegut / Slaughterhouse-Five', correctColumn: 'us-column' },
+            { id: 'item-rowling', text: 'J. K. Rowling / Harry Potter Series', correctColumn: 'non-us-column' }, // British
+            { id: 'item-dickinson', text: 'Emily Dickinson / Poems of Emily Dickinson', correctColumn: 'us-column' },
+            { id: 'item-kafka', text: 'Franz Kafka / The Metamorphosis', correctColumn: 'non-us-column' }, // Czech/German
+            { id: 'item-brown', text: 'Dan Brown / The Da Vinci Code', correctColumn: 'us-column' },
+            { id: 'item-adiga', text: 'Aravind Adiga / The White Tiger', correctColumn: 'non-us-column' }, // Indian
+            { id: 'item-plath', text: 'Sylvia Plath / The Bell Jar', correctColumn: 'us-column' },
+            { id: 'item-murakami', text: 'Haruki Murakami / Norwegian Wood', correctColumn: 'non-us-column' }, // Japanese
+        ];
+
+        // Global variable to store which item is currently being dragged
+        let draggedItem = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const itemPool = document.getElementById('item-pool');
+            const dropZones = document.querySelectorAll('.drop-zone > div');
+            
+            // --- INITIALIZE ITEMS ---
+            literatureItems.forEach(itemData => {
+                const itemElement = document.createElement('div');
+                itemElement.id = itemData.id;
+                itemElement.className = 'drag-item p-3 rounded-lg text-sm font-semibold shadow-md text-center';
+                itemElement.textContent = itemData.text;
+                itemElement.draggable = true;
+                itemElement.setAttribute('data-correct', itemData.correctColumn);
+
+                // Add drag event listeners
+                itemElement.addEventListener('dragstart', handleDragStart);
+                itemElement.addEventListener('dragend', handleDragEnd);
+                
+                itemPool.appendChild(itemElement);
+            });
+
+            // --- INITIALIZE DROP ZONES ---
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', handleDrop);
+            });
+            
+            // Check if items are currently in the drop zones from a previous session (optional)
+            // For a fresh start, we assume all items are in the pool initially.
+        });
+
+
+        // --- DRAG HANDLERS ---
+        function handleDragStart(e) {
+            draggedItem = e.target;
+            e.dataTransfer.setData('text/plain', e.target.id);
+            // Add a class for visual feedback during drag
+            setTimeout(() => e.target.classList.add('dragging'), 0);
+        }
+
+        function handleDragEnd(e) {
+            // Remove dragging class regardless of drop success
+            e.target.classList.remove('dragging');
+            draggedItem = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); // Necessary to allow dropping
+            const dropZoneContainer = e.currentTarget.closest('.drop-zone');
+            if (dropZoneContainer) {
+                dropZoneContainer.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            const dropZoneContainer = e.currentTarget.closest('.drop-zone');
+            if (dropZoneContainer) {
+                dropZoneContainer.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData('text/plain');
+            const draggable = document.getElementById(id);
+            const dropZoneContainer = e.currentTarget.closest('.drop-zone');
+            
+            // Clear drag visual feedback
+            if (dropZoneContainer) {
+                dropZoneContainer.classList.remove('drag-over');
+            }
+
+            // Append the draggable element to the drop zone content area
+            if (draggable && e.currentTarget.id !== 'item-pool') {
+                e.currentTarget.appendChild(draggable);
+                
+                // Remove any previous color coding
+                draggable.classList.remove('correct', 'incorrect');
+                
+                // Clear any previous correct status classes on the column itself
+                document.getElementById('us-column').classList.remove('correct');
+                document.getElementById('non-us-column').classList.remove('correct');
+                
+                // Hide the success message if an item is moved
+                document.getElementById('final-message').classList.add('hidden');
+                document.getElementById('final-message').style.opacity = '0';
+            }
+        }
+
+
+        // --- VALIDATION LOGIC ---
+        function checkAnswers() {
+            const usColumnContent = document.querySelector('#us-column > div');
+            const nonUsColumnContent = document.querySelector('#non-us-column > div');
+            const finalMessage = document.getElementById('final-message');
+            
+            let allCorrect = true;
+            let itemsInColumns = 0;
+
+            // Function to check items in a column
+            const checkColumn = (columnElement) => {
+                const columnId = columnElement.closest('.drop-zone').id;
+                
+                columnElement.querySelectorAll('.drag-item').forEach(item => {
+                    itemsInColumns++;
+                    const correctColumnId = item.getAttribute('data-correct');
+
+                    if (correctColumnId === columnId) {
+                        item.classList.add('correct');
+                        item.classList.remove('incorrect');
+                    } else {
+                        item.classList.add('incorrect');
+                        item.classList.remove('correct');
+                        allCorrect = false;
+                    }
+                });
+            }
+
+            // Check both columns
+            checkColumn(usColumnContent);
+            checkColumn(nonUsColumnContent);
+            
+            // Check if all items (17 total) have been placed
+            if (itemsInColumns < literatureItems.length) {
+                showMessage(`You must place all ${literatureItems.length} items first!`, 'error');
+                allCorrect = false;
+            } else if (allCorrect) {
+                // SUCCESS STATE
+                showMessage('Literary alignment achieved! The path is open.', 'success');
+                finalMessage.classList.remove('hidden');
+                setTimeout(() => finalMessage.style.opacity = '1', 50);
+                
+                // Lock the items to prevent further dragging after success
+                document.querySelectorAll('.drag-item').forEach(item => {
+                    item.draggable = false;
+                    item.style.cursor = 'default';
+                });
+            } else {
+                // FAILURE STATE (visual feedback is already applied to items)
+                showMessage('Incorrect classifications remain. Check the highlighted items.', 'error');
+            }
+        }
+
+        /**
+         * Shows a message box for feedback (replacing alert/confirm).
+         * @param {string} message The message to display.
+         * @param {string} type The type of message ('success' or 'error').
+         */
+        function showMessage(message, type = 'error') {
+            const msgBox = document.createElement('div');
+            msgBox.className = 'fixed top-4 left-1/2 -translate-x-1/2 z-50 p-4 transition-all duration-300 rounded-xl shadow-2xl text-center font-semibold max-w-sm w-full';
+            msgBox.textContent = message;
+
+            if (type === 'success') {
+                msgBox.classList.add('bg-green-600', 'text-white');
+            } else {
+                msgBox.classList.add('bg-red-600', 'text-white');
+            }
+            
+            document.body.appendChild(msgBox);
+
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                msgBox.classList.add('opacity-0');
+                msgBox.addEventListener('transitionend', () => msgBox.remove());
+            }, 3000);
+        }
+
+        // Expose checkAnswers globally for the button click
+        window.checkAnswers = checkAnswers;
+    </script>
+
+</body>
+</html>
