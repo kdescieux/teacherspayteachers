@@ -1,1 +1,1 @@
-https://kdescieux.github.io/teacherspayteachers/labyrinth%20locks.html
+https://kdescieux.github.io/teacherspayteachers/NAME.html
