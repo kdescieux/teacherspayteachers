@@ -1661,10 +1661,10 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
     }
 
     /** Moves to the next logical scene. */
-    function nextScene() {
-      // Prevent double-clicks during transitions
-      if (isTransitioning) return;
-
+    function nextScene(bypassLock = false) {
+      // Prevent double-clicks during transitions (unless bypassing from setTimeout)
+      if (!bypassLock && isTransitioning) return;
+      
       if (currentSceneIndex < allScenes.length - 1) {
         isTransitioning = true;
         showScene(currentSceneIndex + 1);
