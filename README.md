@@ -1,1 +1,1 @@
-https://kdescieux.github.io/teacherspayteachers/NAME.html
+Go directly to Labyrinth: https://kdescieux.github.io/teacherspayteachers/Labyrinth/LabyrinthFull.html
