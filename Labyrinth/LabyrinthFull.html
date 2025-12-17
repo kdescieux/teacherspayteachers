@@ -907,8 +907,9 @@
           }
 
           document.getElementById('locks-continue-btn').addEventListener('click', () => {
+            isTransitioning = true;
             toast('The locks are open!', 'success');
-            setTimeout(nextScene, 1500);
+            setTimeout(() => nextScene(true), 1500);
           });
         })();
       </script>
@@ -1092,8 +1093,9 @@
             document.getElementById('check-button').addEventListener('click', check);
             cont.addEventListener('click', () => {
               if (typeof nextScene === 'function') {
+                isTransitioning = true;
                 toast('Literary challenge complete! Click Continue', 'success');
-                setTimeout(nextScene, 3500);
+                setTimeout(() => nextScene(true), 3500);
               }
             });
           })(); 
@@ -1437,8 +1439,9 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
             $('check-tree-final-button').addEventListener('click', finalCheck);
             $('story-continue').addEventListener('click', () => {
               if (typeof nextScene === 'function') {
+                isTransitioning = true;
                 toast('The tree releases you!', 'success');
-                setTimeout(nextScene, 3500);
+                setTimeout(() => nextScene(true), 1500);
               }
             });
 
