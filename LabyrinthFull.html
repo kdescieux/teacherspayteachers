@@ -514,15 +514,16 @@
       <div class="story-card">
         <p>You hear a loud roar in the distance, and the sound of something <strong>very BIG</strong> running in your
           direction.</p>
-        <img src="https://pa1.aminoapps.com/6476/9f4c06ebef1e0504ab3d104ba8d139ea4b0352c7_hq.gif" alt=“photo”
-          class="w-full max-h-96 object-cover rounded-xl shadow-2xl mx-auto my-18">
         <p>Hurry and solve the riddle!</p>
+        <img src="https://fandomlife4ever.weebly.com/uploads/2/9/7/2/29723575/5499870_orig.gif" alt=“photo”
+          class="w-full max-h-96 object-cover rounded-xl shadow-2xl mx-auto my-18">
       </div>
       <!-- Card 4 ST IVES-->
       <div class="story-card">
         <img src="LabyrinthImages/st-ives.gif" alt="St. Ives riddle"
           class="w-full max-h-96 object-cover rounded-xl shadow-2xl mx-auto my-18">
-        <p>As I was going to St. Ives<br>
+        <p>St. Ives<br>
+          As I was going to St. Ives<br>
           I met a man with seven wives<br>
           The seven wives had seven sacks<br>
           The seven sacks had seven cats<br>
@@ -569,7 +570,7 @@
 
     <!-- SCENE 3: LOCKS (improved version) -->
     <section id="scene3" class="scene">
-      <h3>The Locked Door</h3>
+      <h2>The Locked Door</h2>
       <!-- Story cards stay the same -->
       <div class="story-card">
         <p>The tunnel ends in the middle of another walled garden with only one door.</p>
@@ -594,6 +595,26 @@
     </section>
 
     <section id="scene3locks" class="scene">
+            <script>
+              (function() {
+                // Always disable the continue button when this scene is shown
+                function enforceLocksContinueBtn() {
+                  var btn = document.getElementById('locks-continue-btn');
+                  if (btn) btn.disabled = true;
+                }
+                // Try on DOMContentLoaded
+                document.addEventListener('DOMContentLoaded', enforceLocksContinueBtn);
+                // Try on hashchange (if using hash navigation)
+                window.addEventListener('hashchange', function() {
+                  if (window.location.hash.includes('scene3locks')) enforceLocksContinueBtn();
+                });
+                // Try on every click to the page (for keyboard/skip navigation)
+                document.addEventListener('click', function() {
+                  var scene = document.querySelector('.scene.active#scene3locks');
+                  if (scene) enforceLocksContinueBtn();
+                });
+              })();
+            </script>
       <p style="text-align: center; font-size: 1.5rem; margin: 20px 0;">Answer the statue's questions to unlock each
         lock:</p>
 
@@ -601,18 +622,21 @@
       <style>
         .locks-container {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 32px;
+          grid-template-columns: repeat(2, 1fr);
+          grid-template-rows: repeat(2, 1fr);
+          gap: 32px 32px;
           margin: 32px 0;
         }
 
         .lock-box {
-          background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-          border: 2px solid #475569;
+          background: #f2f6f6;
           border-radius: 20px;
           padding: 24px;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
           transition: all 0.3s ease;
+          min-width: 320px;
+          max-width: 480px;
+          width: 100%;
         }
 
         .lock-box.unlocked {
@@ -700,7 +724,7 @@
         }
 
         .lock-question {
-          color: #e2e8f0;
+          color: black;
           font-size: 1.3rem;
           text-align: center;
           margin: 16px 0;
@@ -842,10 +866,10 @@
       </div>
 
       <div id="locks-final-message">
-        All Locks Unlocked! Click Continue
+        All Locks Unlocked!
       </div>
 
-      <button id="locks-continue-btn" disabled>Continue</button>
+      <button id="locks-continue-btn" style="display:none" disabled>Continue</button>
 
       <script>
         (function () {
@@ -878,7 +902,11 @@
               if (unlockedLocks.size === 4) {
                 const finalMsg = document.getElementById('locks-final-message');
                 finalMsg.classList.add('show');
-                document.getElementById('locks-continue-btn').disabled = false;
+                // Hide the continue button if present
+                var btn = document.getElementById('locks-continue-btn');
+                if (btn) btn.style.display = 'none';
+                toast('All locks unlocked! You may pass.', 'success');
+                setTimeout(() => { if (typeof nextScene === 'function') nextScene(); }, 1500);
               }
             } else {
               // WRONG!
@@ -907,8 +935,7 @@
           }
 
           document.getElementById('locks-continue-btn').addEventListener('click', () => {
-            toast('The locks are open!', 'success');
-            setTimeout(nextScene, 1500);
+            // No longer needed: auto-advance now handled above
           });
         })();
       </script>
@@ -916,7 +943,7 @@
 
     <!-- SCENE 4: LITERATURE (embedded, shows its own Continue) -->
     <section id="scene4a" class="scene">
-      <h3>The Pond of Books</h3>
+      <h2>The Pond of Books</h2>
       <!-- Card 1 OF POND OF BOOKS -->
       <div class="story-card">
         <p>The door opens to a path, and you begin to walk. After a while, you get tired and sit down by a
@@ -938,10 +965,10 @@
     </section>
 
     <section id="scene4" class="scene">
-      <h3>The Pond of Books</h3>
+      <h2>The Pond of Books</h2>
       <p>Drag and drop to sort each work into its category:</p>
-      <p>#1: Literature from the United States of America vs </p>
-      <p>#2: Non-USA Literature.</p>
+      <p><strong>1: Literature from the United States of America </strong></p>
+      <p><strong>2: Non-USA Literature.</strong></p>
       <p>Click "Verify" to check your answers.</p>
 
       <div class="embed-card" id="literature-embed">
@@ -1021,12 +1048,12 @@
         <button id="check-button" class="mt-3 px-4 py-2 rounded" style="background:#e7e6f5">Verify Your Answers</button>
 
         <div id="final-message" class="hidden">
-          <h4 class="title-font text-2xl font-bold text-white mb-2">Challenge Complete! Click Continue</h4>
+          <h4 class="title-font text-2xl font-bold text-white mb-2">Challenge Complete!</h4>
         </div>
 
         <!-- Module’s own Continue (Option 1) -->
         <button id="literature-continue" class="mt-3 px-4 py-2 rounded bg-slate-600 text-white"
-          disabled>Continue</button>
+          style="display:none" disabled>Continue</button>
 
         <script>
           (function () {
@@ -1086,15 +1113,19 @@
                 });
               });
               if (placed < items.length) { toast(`Place all ${items.length} items first!`); all = false }
-              else if (all) { toast('Literary alignment achieved!', 'success'); finalBox.classList.remove('hidden'); finalBox.style.opacity = '1'; cont.disabled = false; }
+              else if (all) {
+                toast('Literary alignment achieved!', 'success');
+                finalBox.classList.remove('hidden');
+                finalBox.style.opacity = '1';
+                // Hide the continue button if present
+                cont.style.display = 'none';
+                setTimeout(() => { if (typeof nextScene === 'function') nextScene(); }, 1500);
+              }
               else { toast('Incorrect classifications remain.') }
             }
             document.getElementById('check-button').addEventListener('click', check);
             cont.addEventListener('click', () => {
-              if (typeof nextScene === 'function') {
-                toast('Literary challenge complete! Click Continue', 'success');
-                setTimeout(nextScene, 3500);
-              }
+              // No longer needed: auto-advance now handled above
             });
           })(); 
         </script>
@@ -1107,8 +1138,7 @@
       <h2>The Cat</h2>
       <!-- Card -->
       <div class="story-card">
-        <p>How much time has passed? How long were you by the pond? You have wasted too much time.</p>
-        <p>You continue down the path.</p>
+        <p>You all feel rested after sitting for a moment, so you you continue down the path.</p>
         <img src="https://miro.medium.com/v2/resize:fit:852/1*mCYuw47S0J3ZwRNuQ32FmA.gif" alt=“photo”
           class="w-full max-h-96 object-cover rounded-xl shadow-2xl mx-auto my-18">
       </div>
@@ -1121,7 +1151,7 @@
       <div class="story-card">
         <p>A cat statue as big as a car jumps out from behind a bush, and crouches in front of you, blocking your way
           forward.</p>
-        <img src="LabyrinthImages/catstatue.gif" alt="Cat Statue"
+        <img src="LabyrinthImages/newcat.gif" alt="Cat Statue"
           class="w-full max-h-96 object-cover rounded-xl shadow-2xl mx-auto my-18">
       </div>
       <div class="story-card">
@@ -1184,7 +1214,7 @@
       <div class="story-card">
         <p>The apples are delicious! But, you are all too busy eating to notice when the tree begins to move... </p>
         <p>The tree comes to life, and is like a giant tree monster. It grabs all of you up into its branches. You can't escape!</p>
-        <img src="LabyrinthImages/angrytree.jpeg" alt="photo"
+        <img src="LabyrinthImages/appletreemonster.gif" alt="photo"
           class="w-full max-h-96 object-cover rounded-xl shadow-2xl mx-auto my-18">
       </div>
       <!-- Card 3 OF MADLIBS-->
@@ -1192,7 +1222,7 @@
         <p>The tree says,</p>
 
         <p><strong>"You have enjoyed my apples, and now it is time to pay. Once you have told me an entertaining story,
-            I will let you go. If I do not like your story, your time in the labyrinth with have a very bad ending!"</strong></p>
+            I will let you go. If I do not like your story, your time in the labyrinth will have a very bad ending!"</strong></p>
       </div>
       <!-- Card 4 OF MADLIBS-->
       <div class="story-card">
@@ -1206,13 +1236,12 @@
         <!-- ===== BEGIN EMBED: tell-story.html (trimmed head/body, self-contained) ===== -->
         <style>
           .story-output-box {
-            border: 2px solid #6366f1;
+            border: 2px solid #111;
             position: sticky;
             top: 80px;
             z-index: 10;
             background: white;
-            max-height: 400px;
-            overflow-y: auto;
+            /* Removed max-height and overflow-y for no scroll */
           }
 
           .tree-reaction-box {
@@ -1237,24 +1266,25 @@
 
         <div id="story-module">
           <h4 class="title-font text-3xl mb-2"
-            style="background:linear-gradient(90deg,#fde047,#f59e0b);-webkit-background-clip:text;color:transparent">
+            style="background:black;-webkit-background-clip:text;color:transparent">
             The Best Story Ever</h4>
           <p class="text-black text-base mb-3">Tell the <strong>tree monster</strong> a great story. Fill in each blank with the correct type of word, then click "Tell Part 1 of your story."</p>
 
           <div id="madlibs-inputs">
           </div>
 
-          <button id="generate-story-button" class="mt-3 px-4 py-2 rounded" style="background:#86efac">Tell Part 1 of
+          <button id="generate-story-button" class="mt-3 px-4 py-2 rounded" style="background: white">Tell Part 1 of
             your story</button>
 
           <div id="story-output" class="hidden mt-4 p-4 rounded-xl bg-gray-100 story-output-box">
-            <h5 class="title-font text-2xl text-indigo-400 mb-2">Part 1: The Origin of Power</h5>
-            <p id="story-text" class="text-base leading-relaxed whitespace-pre-wrap"></p>
+            <h5 id="story-part1-header" class="title-font text-2xl mb-1" style="color:#111;font-family:inherit;">Part 1: The Origin of Power</h5>
+            <h5 id="story-part2-header" class="title-font text-2xl mb-1 hidden" style="color:#111;font-family:inherit;">Part 2: Becoming a True Hero</h5>
+            <p id="story-text" class="leading-relaxed whitespace-pre-wrap" style="font-size:1.6em;"></p>
           </div>
 
           <button id="check-tree-part1-button" class="hidden mt-3 px-4 py-2 rounded bg-red-600">See if the tree is
             liking your story</button>
-          <button id="check-tree-final-button" class="hidden mt-3 px-4 py-2 rounded bg-indigo-600">See if the tree liked
+          <button id="check-tree-final-button" class="hidden mt-3 px-4 py-2 rounded bg-white-600">See if the tree liked
             your story</button>
 
           <div id="tree-reaction-output" class="hidden mt-4 p-4 rounded-xl bg-green-900 tree-reaction-box">
@@ -1264,7 +1294,7 @@
           </div>
 
           <!-- Module's own Continue (Option 1) -->
-          <button id="story-continue" class="mt-3 px-4 py-2 rounded bg-slate-600 text-white" disabled>Continue</button>
+          <!-- Continue button removed as per requirements -->
         </div>
 
         <script>
@@ -1288,7 +1318,7 @@
               { id: 'nounPlural2', label: '13. Noun (Plural, People)', type: 'text', placeholder: 'e.g., Children' },
               { id: 'nounPlural3', label: '14. Noun (Plural, People)', type: 'text', placeholder: 'e.g., Neighbors' },
               { id: 'verb2', label: '15. Action Word (Past Tense Verb)', type: 'text', placeholder: 'e.g., Rushed' },
-              { id: 'verb3', label: '16. Action Word (Present Tense Verb)', type: 'text', placeholder: 'e.g., Hurt' },
+              { id: 'verb3', label: '16. Action Word (Past Participle Verb)', type: 'text', placeholder: 'e.g., Hurt' },
             ];
 
             const t1 = `
@@ -1306,8 +1336,6 @@ When \${properNoun1} got home, strange things started happening. They discovered
 `;
 
             const t2 = `
-<br><h3 class="title-font text-2xl text-indigo-400 mb-2">Part 2: Becoming a True Hero</h3>
-
 That night, \${properNoun1} couldn't sleep. Their grandmother always said, "With great \${noun2} comes great \${noun3}." Now they understood what that meant. Having special abilities meant using them to protect others.
 
 The next day, \${properNoun1} worked hard to find the thief. It was \${adjective4}, but they didn't give up. They returned the purse and caught several other thieves too!
@@ -1373,6 +1401,8 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
 
             function genPart1() {
               const out = $('story-output'), text = $('story-text'), next = $('check-tree-part1-button'), gen = $('generate-story-button');
+              const part1Header = $('story-part1-header');
+              const part2Header = $('story-part2-header');
               const r = process(part1, t1);
               if (r.missing) {
                 toast('Please fill in all the blanks for Part 1!');
@@ -1384,6 +1414,8 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
               storyPart1 = r.story;
               text.innerHTML = storyPart1;
               out.classList.remove('hidden');
+              part1Header.classList.remove('hidden');
+              part2Header.classList.add('hidden');
               next.classList.remove('hidden');
               document.querySelectorAll('#madlibs-inputs input').forEach(i => i.disabled = true);
               gen.disabled = true;
@@ -1400,11 +1432,19 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
               gen.disabled = false;
               next.classList.add('hidden');
               $('tree-reaction-output').classList.add('hidden');
+              // Hide part 1 header and text when moving to part 2
+              setTimeout(() => {
+                $('story-output').classList.remove('hidden');
+                $('story-part1-header').classList.add('hidden');
+                $('story-part2-header').classList.remove('hidden');
+                $('story-text').innerHTML = '';
+              }, 500);
             }
 
             function genPart2() {
               const text = $('story-text');
               const fin = $('check-tree-final-button');
+              const part2Header = $('story-part2-header');
               const r = process(part2, t2);
               if (r.missing) {
                 toast('Please fill in all the blanks for Part 2!');
@@ -1413,34 +1453,28 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
               }
               // ensure properNoun1 (heroName) survives into part 2 if used
               const withHero = r.story.replace(/\$\{\s*properNoun1\s*\}/g, `<span class="font-extrabold text-red-600">${heroName}</span>`);
-              text.innerHTML = storyPart1 + withHero;
+              // Only show part 2
+              part2Header.classList.remove('hidden');
+              text.innerHTML = withHero;
               document.querySelectorAll('#madlibs-inputs input').forEach(i => i.disabled = true);
               $('generate-story-button').disabled = true;
               fin.classList.remove('hidden');
-              toast('The Epic is complete! Scroll down to read the second half and present the grand finale to the Tree.', 'success');
+              toast('The Epic is complete! Present the grand finale to the Tree.', 'success');
             }
 
             function finalCheck() {
-              const out = $('tree-reaction-output');
-              const verdict = $('tree-verdict-text');
-              verdict.innerHTML = 'The enchanted tree glows with satisfaction! "An inspiring epic! Click continue."';
-              out.classList.remove('hidden');
+              // Show popup, then auto-advance
+              toast('What a wonderful epic! I have never heard anything like it. You may pass', 'success');
               $('check-tree-final-button').disabled = true;
-              toast('Success! The Tree is pleased.', 'success');
-              // enable this module's Continue
-              $('story-continue').disabled = false;
+              setTimeout(() => {
+                if (typeof nextScene === 'function') nextScene();
+              }, 3500);
             }
 
             // wire buttons
             $('generate-story-button').addEventListener('click', genPart1);
             $('check-tree-part1-button').addEventListener('click', checkPart1);
             $('check-tree-final-button').addEventListener('click', finalCheck);
-            $('story-continue').addEventListener('click', () => {
-              if (typeof nextScene === 'function') {
-                toast('The tree releases you!', 'success');
-                setTimeout(nextScene, 3500);
-              }
-            });
 
             // init
             initInputs(part1);
@@ -1485,7 +1519,7 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
 
     <!-- SCENE 8: Choose a Path -->
     <section id="scene8" class="scene" data-key="path">
-      <h3>The Fork in the Maze</h3>
+      <h2>The Fork in the Maze</h2>
       <!-- Card 1 CHOOSE A PATH-->
       <div class="story-card">
         <p>It took a while, but you made it past the vines. You keep walking until you come to a fork in the path with
@@ -1654,6 +1688,13 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
       updateProgress();
       window.scrollTo(0, 0);
 
+      // Re-enable all navigation buttons in the new scene
+      setTimeout(() => {
+        document.querySelectorAll('.scene.active button[data-nav]').forEach(btn => {
+          btn.disabled = false;
+        });
+      }, 0);
+
       // Call setup functions for specific scenes if needed (like the literature puzzle)
       if (allScenes[index].id === 'scene4' && typeof setupLiterature === 'function') {
         setupLiterature();
@@ -1664,6 +1705,11 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
     function nextScene() {
       // Prevent double-clicks during transitions
       if (isTransitioning) return;
+
+      // Disable all navigation buttons in the current scene immediately
+      document.querySelectorAll('.scene.active button[data-nav]').forEach(btn => {
+        btn.disabled = true;
+      });
 
       if (currentSceneIndex < allScenes.length - 1) {
         isTransitioning = true;
@@ -1696,6 +1742,15 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
 
 
     // --- Custom Validation Functions ---
+
+    // Utility: Mark all navigation buttons with data-nav attribute
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent.trim().toLowerCase() === 'continue' || btn.textContent.trim().toLowerCase().includes('start adventure')) {
+          btn.setAttribute('data-nav', 'true');
+        }
+      });
+    });
 
     /** Validates the initial access password. */
     function checkPassword() {
@@ -1906,7 +1961,7 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
 
       if (allCorrect) {
         toast('The vines untangle! You may pass.', 'success');
-        setTimeout(nextScene, 3500);
+        setTimeout(nextScene, 1500);
       } else {
         window.vineAttempts++;
 
@@ -1917,7 +1972,7 @@ And their grandmother? She never knew her grandchild was the mysterious hero eve
             document.getElementById(`vine${i}`).value = answers[`vine${i}`];
             document.getElementById(`vine${i}`).style.borderColor = '#10b981';
           }
-          setTimeout(nextScene, 3500);
+          setTimeout(nextScene, 1500);
         } else {
           toast(`${correctCount} out of 5 correct. ${5 - window.vineAttempts} attempts remaining.`, 'error');
         }
