@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katie's "Lost in the City" - ESL Escape Adventure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ash-grey: #b4b8abff;
+            --deep-space-blue: #153243ff;
+            --yale-blue: #284b63ff;
+            --ivory: #f4f9e9ff;
+            --soft-linen: #eef0ebff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--yale-blue) 0%, var(--deep-space-blue) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: var(--deep-space-blue);
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        h2 {
+            color: var(--yale-blue);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        h3 {
+            color: var(--deep-space-blue);
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--soft-linen);
+            border-radius: 5px;
+        }
+
+        p, li {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .dialogue {
+            background: var(--ivory);
+            border-left: 4px solid var(--yale-blue);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .dialogue p {
+            margin-bottom: 10px;
+        }
+
+        .dialogue strong {
+            color: var(--deep-space-blue);
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .question {
+            background: var(--soft-linen);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .question p {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--yale-blue);
+        }
+
+        .options {
+            margin-left: 20px;
+        }
+
+        .option {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--ash-grey);
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 10px 0;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: var(--yale-blue);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--yale-blue) 0%, var(--deep-space-blue) 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 20px 10px 10px 0;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(21, 50, 67, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            color: #dc3545;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #28a745;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--soft-linen);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--yale-blue) 0%, var(--deep-space-blue) 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .instructions-list {
+            background: var(--ivory);
+            border-left: 4px solid var(--ash-grey);
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .instructions-list li {
+            margin-bottom: 10px;
+        }
+
+        .drawing-instructions {
+            background: var(--ivory);
+            border: 2px dashed var(--ash-grey);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .drawing-instructions ol {
+            margin-left: 20px;
+        }
+
+        .drawing-instructions li {
+            margin: 8px 0;
+        }
+
+        .congratulations {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .congratulations h2 {
+            color: #28a745;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            margin-left: 30px;
+        }
+
+        .reflection-questions {
+            background: var(--soft-linen);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .reflection-questions li {
+            margin: 15px 0;
+            color: var(--yale-blue);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            button {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Section 1: Password -->
+        <div id="section1" class="section active">
+            <h1>Katie's "Lost in the City"</h1>
+            <p style="text-align: center; font-style: italic; margin-bottom: 30px;">
+                Step into the captivating world of "Lost in the City," an entertaining digital escape adventure 
+                designed for early intermediate and intermediate ESL students. You and a group of friends have 
+                embarked on a fun vacation to New York, only to find yourselves lost in the bustling city streets. 
+                With engaging listening and speaking activities, sharpen your English language skills in pronunciation, 
+                descriptions, vocabulary, and more. Work together as a team to navigate through the urban maze and 
+                find your way back to the hotel. Get ready for an immersive language-learning experience that combines 
+                excitement and language proficiency.
+            </p>
+            
+            <h2>Password:</h2>
+            <p>Please enter the access password which was provided with your purchase</p>
+            <input type="text" id="passwordInput" placeholder="Enter password">
+            <div id="passwordError" class="error" style="display: none;">Incorrect password. Please try again.</div>
+            <button onclick="checkPassword()">Submit</button>
+        </div>
+
+        <!-- Section 2: Instructions -->
+        <div id="section2" class="section">
+            <h1>Instructions</h1>
+            <p>Welcome to Katie's "Lost in the City," a fun digital escape adventure for intermediate ESL students!</p>
+            
+            <div class="instructions-list">
+                <ol>
+                    <li><strong>The Team:</strong> Your group will play together as one team, but everyone will need a partner (or group of 3) for some sub-challenges.</li>
+                    <li><strong>Read the Narrative:</strong> Students will take turns reading the story of the friends' vacation in New York.</li>
+                    <li><strong>Participate in Challenges:</strong> As you read, you'll encounter various challenges. Work collaboratively to solve them and advance through the adventure.</li>
+                    <li><strong>Improve Your English:</strong> Engage in listening and speaking activities that enhance your pronunciation, descriptive skills, vocabulary, and more. Communication is key to finding your way back to the hotel.</li>
+                </ol>
+            </div>
+
+            <p style="background: var(--ivory); padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <strong>Remember:</strong> This escape adventure is all about having fun while enhancing your English language skills. 
+                Work together, communicate effectively, and enjoy the journey through the vibrant streets of New York City!
+            </p>
+
+            <p style="text-align: center; font-size: 1.2em; margin-top: 30px;">
+                <strong>Good luck, and let the adventure begin!</strong>
+            </p>
+
+            <h2>Are you ready to start?</h2>
+            <button onclick="goToSection(3)">Yes, Let's Start!</button>
+        </div>
+
+        <!-- Section 3: Story Beginning -->
+        <div id="section3" class="section">
+            <h1>Our adventure begins...</h1>
+            
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=800" alt="Busy New York City street">
+            </div>
+
+            <p style="font-size: 1.2em; text-align: center; margin: 30px 0;">
+                You and your friends have traveled to New York for a fun vacation, and after a long morning of 
+                sightseeing, you realize that you're lost!
+            </p>
+
+            <p style="font-size: 1.1em; text-align: center; font-weight: bold; color: var(--yale-blue);">
+                You need to find your way to your hotel. Use your English skills to get to your hotel.
+            </p>
+
+            <button onclick="goToSection(4)">Continue</button>
+        </div>
+
+        <!-- Section 4: Dialogue -->
+        <div id="section4" class="section">
+            <h1>First things first; you decide to ask someone for help.</h1>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1516032274999-e1a2e7e00f8f?w=600" alt="People asking for directions">
+            </div>
+
+            <h3>Read the dialogue, focusing on pronunciation:</h3>
+            <p style="font-style: italic;">(Choose two participants. One will be "You" and the other the "NYC Local")</p>
+
+            <div class="dialogue">
+                <p><strong>You:</strong> Excuse me, do you know where the Crown Plaza Hotel is?</p>
+                <p><strong>NYC Local:</strong> The Crown Plaza? Yes, I do. It's not far from here.</p>
+                <p><strong>You:</strong> Oh great! Could you give me directions please? My phone battery has died and I don't have a map.</p>
+                <p><strong>NYC Local:</strong> Sure thing. So, you're going to turn right at this intersection and walk straight for about three blocks until you reach the roundabout.</p>
+                <p><strong>You:</strong> Roundabout?</p>
+                <p><strong>NYC Local:</strong> Yeah, there's a big circular area with several exits. You need to take the second. There's a signpost that says 'Crown Plaza' next to it.</p>
+                <p><strong>You:</strong> Take the second exit... Got it.</p>
+                <p><strong>NYC Local:</strong> Then, just keep walking along that street for another block or so, and you'll see the hotel on your right-hand side. It's a tall building with lots of windows.</p>
+                <p><strong>You:</strong> Okay, I think I have it. Thank you very much!</p>
+                <p><strong>NYC Local:</strong> No problem. Enjoy your stay in New York!</p>
+            </div>
+
+            <button onclick="goToSection(5)">Continue to Questions</button>
+        </div>
+
+        <!-- Section 5: Comprehension Questions -->
+        <div id="section5" class="section">
+            <h1>Dialogue Follow-up Questions (Comprehension)</h1>
+
+            <div class="question">
+                <p>1. What does the NYC Local mean when they say, "sure thing"?</p>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q1a" name="q1" value="A">
+                        <label for="q1a">A) It is a fact</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q1b" name="q1" value="B">
+                        <label for="q1b">B) Yes, you are lost</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q1c" name="q1" value="C">
+                        <label for="q1c">C) Yes, I can help</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>2. What is a "roundabout"?</p>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q2a" name="q2" value="A">
+                        <label for="q2a">A) A popular amusement park ride that spins people around in circular cars.</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2b" name="q2" value="B">
+                        <label for="q2b">B) An intersection where traffic moves in one, circular direction around a central space.</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2c" name="q2" value="C">
+                        <label for="q2c">C) A type of circular garden design often found in public parks.</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>3. What is another way to say, "keep walking along"?</p>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q3a" name="q3" value="A">
+                        <label for="q3a">A) Continue</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3b" name="q3" value="B">
+                        <label for="q3b">B) Stay in the middle</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3c" name="q3" value="C">
+                        <label for="q3c">C) Turn right</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3d" name="q3" value="D">
+                        <label for="q3d">D) Stand still</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="comprehensionError" class="error" style="display: none;">Please answer all questions before continuing.</div>
+            <button onclick="checkComprehension()">Submit Answers</button>
+        </div>
+
+        <!-- Section 6: Drawing Challenge -->
+        <div id="section6" class="section">
+            <h1>Drawing Challenge</h1>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400" alt="Simple map diagram">
+            </div>
+
+            <h2>Can you draw a map of the directions the helpful NYC local gave you?</h2>
+
+            <div class="drawing-instructions">
+                <ol>
+                    <li>Start</li>
+                    <li>Turn right at "this" intersection</li>
+                    <li>Walk straight for about three blocks</li>
+                    <li>At the roundabout, take the second exit (There's a signpost that says 'Crown Plaza')</li>
+                    <li>Keep walking along that street for another block</li>
+                    <li>The hotel will be on the right-hand side.</li>
+                </ol>
+            </div>
+
+            <p style="background: var(--ivory); padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <strong>Activity:</strong> Work with your team to draw this map on paper or a whiteboard. 
+                Make sure to include all the landmarks and directions mentioned!
+            </p>
+
+            <button onclick="goToSection(7)">Continue - I've drawn my map</button>
+        </div>
+
+        <!-- Section 7: Street Names Listening Challenge -->
+        <div id="section7" class="section">
+            <h1>Street Names Challenge</h1>
+
+            <p>You show your map to the NYC local, and they confirm that everything is correct.</p>
+            
+            <p>To make sure you don't take a wrong turn, the NYC local gives you some street names that you can 
+            add to your map to make it more accurate.</p>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1545289414-1c3cb1c06238?w=600" alt="New York street signs">
+            </div>
+
+            <h3>Listen carefully and choose the correct spelling of the street names that you are told:</h3>
+
+            <div class="question">
+                <p>1. Turn right at this intersection of ______ and ________.</p>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q4a" name="q4" value="A">
+                        <label for="q4a">1. Norse Street & Lake Road</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q4b" name="q4" value="B">
+                        <label for="q4b">2. North Street & Lake Road</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q4c" name="q4" value="C">
+                        <label for="q4c">3. North Street & Like Road</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>2. Walk straight for about three blocks until you reach the roundabout. You will pass ______, ________, & ________ street.</p>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q5a" name="q5" value="A">
+                        <label for="q5a">1. Beach, Vine, and Pet</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q5b" name="q5" value="B">
+                        <label for="q5b">2. Peach, Vine, and Pit</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q5c" name="q5" value="C">
+                        <label for="q5c">3. Beach, Fine, and Pet</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>3. You need to take the second exit of the roundabout, onto __________.</p>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q6a" name="q6" value="A">
+                        <label for="q6a">1. Caught Court</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q6b" name="q6" value="B">
+                        <label for="q6b">2. Cut Court</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q6c" name="q6" value="C">
+                        <label for="q6c">3. Cat Court</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>4. Then just keep walking along that street for another block or so, and you'll see the hotel on your right-hand side. It's on ____________.</p>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q7a" name="q7" value="A">
+                        <label for="q7a">1. Hollywood Boulevard</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q7b" name="q7" value="B">
+                        <label for="q7b">2. Holy Wood Boulevard</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q7c" name="q7" value="C">
+                        <label for="q7c">3. Hall and Wood Boulevard</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="streetNamesError" class="error" style="display: none;">Please answer all questions before continuing.</div>
+            <button onclick="checkStreetNames()">Submit Answers</button>
+        </div>
+
+        <!-- Section 8: Map Complete -->
+        <div id="section8" class="section">
+            <h1>Good! Your map is complete.</h1>
+
+            <p style="font-size: 1.1em; text-align: center; margin: 30px 0;">
+                You now have all the street names added to your map. Time to find your hotel!
+            </p>
+
+            <button onclick="goToSection(9)">Continue</button>
+        </div>
+
+        <!-- Section 9: Finding the Hotel -->
+        <div id="section9" class="section">
+            <h1>Finding the Hotel</h1>
+
+            <p>You finally find the street your hotel should be on, but you can't find the hotel!</p>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1546436752-1fe9df3e3a91?w=800" alt="Times Square area">
+            </div>
+
+            <p style="margin: 30px 0;">Your friend will ask you some questions about the hotel so that you can all find it faster.</p>
+
+            <p style="background: var(--ivory); padding: 15px; border-radius: 5px; font-style: italic;">
+                Use your "memory" of the photos of the hotel to help you answer her questions.
+            </p>
+
+            <p style="text-align: center; margin: 20px 0;">
+                <a href="#" style="color: var(--yale-blue); text-decoration: none; font-weight: bold;">Photo 1</a> // 
+                <a href="#" style="color: var(--yale-blue); text-decoration: none; font-weight: bold;">Photo 2</a> // 
+                <a href="#" style="color: var(--yale-blue); text-decoration: none; font-weight: bold;">Photo 3</a>
+            </p>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=700" alt="Crown Plaza Hotel">
+            </div>
+
+            <p style="background: var(--ivory); padding: 15px; border-radius: 5px; margin: 30px 0;">
+                <strong>Activity:</strong> Discuss with your team what you remember about the hotel from the photos. 
+                Describe the building's features, colors, and any distinguishing characteristics.
+            </p>
+
+            <button onclick="goToSection(10)">We found it!</button>
+        </div>
+
+        <!-- Section 10: Food Vendor -->
+        <div id="section10" class="section">
+            <h1>Ah! There's the hotel! What a relief.</h1>
+
+            <p>But, before you go up to your room, you decide to grab a bite to eat first.</p>
+
+            <p>Eating food from a street vendor cart is a "must" when you visit New York! So, you follow your noses 
+            to a cart that smells <em>delicious</em>.</p>
+
+            <h2>First, you make sure you know what everything is on the MENU</h2>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?w=700" alt="New York street food vendor">
+            </div>
+
+            <h3>Now that you're familiar with what is offered, it's time to order.</h3>
+
+            <p style="background: var(--ivory); padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <strong>Activity:</strong> Everyone will order something to eat and something to drink from the vendor.
+            </p>
+
+            <p style="background: var(--soft-linen); padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid var(--ash-grey);">
+                <strong>Important:</strong> You must also ask <strong>at least one question</strong> about the menu, 
+                for example if you can add or remove an ingredient, or what sauces are offered.
+            </p>
+
+            <p style="text-align: center; margin-top: 30px; font-style: italic;">
+                Take turns role-playing as the customer and vendor!
+            </p>
+
+            <button onclick="goToSection(11)">Continue - Everyone has ordered</button>
+        </div>
+
+        <!-- Section 11: Final Reflection -->
+        <div id="section11" class="section">
+            <div class="congratulations">
+                <h2>🎉 Congratulations! 🎉</h2>
+                
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=700" alt="Statue of Liberty view">
+                </div>
+
+                <p style="font-size: 1.2em; margin: 30px 0;">
+                    You've successfully solved all the puzzles and found your way to your hotel!
+                </p>
+
+                <h2 style="color: var(--yale-blue); font-size: 1.8em; margin-top: 40px;">Final Reflection</h2>
+
+                <p style="text-align: left; margin: 30px 0;">
+                    Your final challenge is to have a conversation with your friends about what you learned today.
+                </p>
+
+                <div class="reflection-questions">
+                    <ul>
+                        <li>What were the most challenging puzzles?</li>
+                        <li>What new vocabulary did you learn?</li>
+                        <li>What was your favorite part of the activity?</li>
+                    </ul>
+                </div>
+
+                <p style="background: var(--ivory); padding: 20px; border-radius: 10px; margin: 30px 0;">
+                    <strong>Take a few minutes to discuss these questions with your team. Share your thoughts and 
+                    experiences from this adventure!</strong>
+                </p>
+
+                <button onclick="goToSection(12)">Continue to Feedback</button>
+            </div>
+        </div>
+
+        <!-- Section 12: Feedback -->
+        <div id="section12" class="section">
+            <h1>Thank You!</h1>
+
+            <p style="font-size: 1.2em; text-align: center; margin: 30px 0;">
+                Thank you for playing "Katie's Lost in the City"! We hope you enjoyed this ESL adventure 
+                and learned some valuable English skills along the way.
+            </p>
+
+            <h2>Share Your Feedback</h2>
+
+            <p style="text-align: center; margin: 30px 0;">
+                If you have any feedback, please share! (questions, issues, concerns, recommendations)
+            </p>
+
+            <div style="text-align: center; margin: 40px 0;">
+                <button onclick="window.open('https://docs.google.com/forms/d/1cB7WrsQW9kuQ_X3rd5lh-agXh_ZSP3bDrx2bh5tMipE/viewform', '_blank')" 
+                        style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                    📝 Submit Feedback
+                </button>
+            </div>
+
+            <p style="text-align: center; font-style: italic; color: #666; margin-top: 50px;">
+                Created by Katie | ESL Escape Adventures
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Correct answers
+        const answers = {
+            q1: 'C',
+            q2: 'B',
+            q3: 'A',
+            q4: 'B',
+            q5: 'B',
+            q6: 'B',
+            q7: 'A'
+        };
+
+        const totalSections = 12;
+
+        function updateProgressBar(currentSection) {
+            const progress = (currentSection / totalSections) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function goToSection(sectionNum) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('section' + sectionNum).classList.add('active');
+            updateProgressBar(sectionNum);
+            window.scrollTo(0, 0);
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('passwordError');
+            
+            // Correct password from user guide
+            if (password === 'tpt*()2023') {
+                errorDiv.style.display = 'none';
+                goToSection(2);
+            } else {
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function checkComprehension() {
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            const errorDiv = document.getElementById('comprehensionError');
+
+            if (!q1 || !q2 || !q3) {
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (q1.value === answers.q1 && q2.value === answers.q2 && q3.value === answers.q3) {
+                errorDiv.style.display = 'none';
+                goToSection(6);
+            } else {
+                errorDiv.textContent = 'Some answers are incorrect. Please review your responses and try again.';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function checkStreetNames() {
+            const q4 = document.querySelector('input[name="q4"]:checked');
+            const q5 = document.querySelector('input[name="q5"]:checked');
+            const q6 = document.querySelector('input[name="q6"]:checked');
+            const q7 = document.querySelector('input[name="q7"]:checked');
+            const errorDiv = document.getElementById('streetNamesError');
+
+            if (!q4 || !q5 || !q6 || !q7) {
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (q4.value === answers.q4 && q5.value === answers.q5 && 
+                q6.value === answers.q6 && q7.value === answers.q7) {
+                errorDiv.style.display = 'none';
+                goToSection(8);
+            } else {
+                errorDiv.textContent = 'Some answers are incorrect. Listen carefully and try again.';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        // Allow Enter key for password
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('passwordInput');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+            }
+            // Initialize progress bar
+            updateProgressBar(1);
+        });
+    </script>
+</body>
+</html>
